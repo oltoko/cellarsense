@@ -1,0 +1,51 @@
+---
+- hosts: all
+  user: pi
+  become: True
+  become_method: sudo
+  become_user: root
+
+  tasks:
+
+    - name: Update System
+      apt:
+        upgrade: dist
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        pkg:
+          - influxdb
+          - influxdb-client
+          - ntp
+          - python3
+
+    - name: Create etc directory
+      file:
+        path: /etc/cellarsense
+        state: directory
+
+    - name: Copy Python requirements
+      copy:
+        src: ../scripts/requirements.txt
+        dest: /etc/cellarsense/requirements.txt
+        owner: root
+        group: root
+        mode: '0644'
+        backup: yes
+
+    - name: Install required Python libraries
+      pip:
+        requirements: /etc/cellarsense/requirements.txt
+
+    - name: Creating user
+      user:
+        name: cellarsense
+
+    - name: Enable I2C for SHT31-D
+      shell: "raspi-config nonint do_i2c 0"
+
+    - name: Enable SPI for Inky pHAT
+      shell: "raspi-config nonint do_spi 0"
+
