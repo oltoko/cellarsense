@@ -21,12 +21,12 @@
           - ntp
           - python3
 
-    - name: Create etc directory
+    - name: Create directory /etc/cellarsense
       file:
         path: /etc/cellarsense
         state: directory
 
-    - name: Copy Python requirements
+    - name: Copy Python requirements to /etc/cellarsense
       copy:
         src: ../scripts/requirements.txt
         dest: /etc/cellarsense/requirements.txt
@@ -49,3 +49,15 @@
     - name: Enable SPI for Inky pHAT
       shell: "raspi-config nonint do_spi 0"
 
+    - name: Create directory /var/local/cellarsense
+      file:
+        path: /var/local/cellarsense
+        state: directory
+
+    - name: Copy background to /var/local/cellarsense
+      copy:
+        src: ../resources/cellarsense-background.png
+        dest: /var/local/cellarsense/cellarsense-background.png
+        owner: root
+        group: root
+        mode: '0644'
