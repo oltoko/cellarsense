@@ -100,7 +100,7 @@ s = sched.scheduler(time.time, time.sleep)
 
 # Execute heating and measurement
 heater(1800, 1, s, sensor)
-measure(600, 10, s, sensor)
+measure(3600, 10, s, sensor)
 
 # Run scheduler
 logging.info("Start scheduler")
