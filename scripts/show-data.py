@@ -109,7 +109,7 @@ def refreshDisplay(intervall, priority, scheduler):
     inkyDisplay.set_image(img)
     inkyDisplay.show()
 
-    logging.info("Refresh Display - Done")
+    logging.info("Refresh Display - done")
 
     # reschedule
     scheduler.enter(intervall, priority, refreshDisplay,
