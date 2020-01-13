@@ -1,63 +1,125 @@
 ---
-- hosts: all
-  user: pi
+- hosts: "all"
+  user: "pi"
   become: True
-  become_method: sudo
-  become_user: root
+  become_method: "sudo"
+  become_user: "root"
+  
+  vars_prompt:
+
+    - name: colour
+      prompt: "Which Inky pHat are you using (red, yellow, black)?"
+      private: no
 
   tasks:
 
-    - name: Update System
+    - name: "Update System"
       apt:
-        upgrade: dist
-        update_cache: yes
-        cache_valid_time: 3600
+        upgrade: "dist"
+        update_cache: "yes"
+        cache_valid_time: 86400
 
-    - name: Install required packages
+    - name: "Install required packages"
       apt:
         pkg:
-          - influxdb
-          - influxdb-client
-          - ntp
-          - python3
+          - "influxdb"
+          - "influxdb-client"
+          - "ntp"
+          - "python3"
 
-    - name: Create directory /etc/cellarsense
+    - name: "Create directory /etc/cellarsense"
       file:
-        path: /etc/cellarsense
-        state: directory
+        path: "/etc/cellarsense"
+        state: "directory"
 
-    - name: Copy Python requirements to /etc/cellarsense
+    - name: "Copy Python requirements to /etc/cellarsense"
       copy:
-        src: ../scripts/requirements.txt
-        dest: /etc/cellarsense/requirements.txt
-        owner: root
-        group: root
-        mode: '0644'
-        backup: yes
+        src: "../scripts/requirements.txt"
+        dest: "/etc/cellarsense/requirements.txt"
+        owner: "root"
+        group: "root"
+        mode: "0644"
 
-    - name: Install required Python libraries
+    - name: "Install required Python libraries"
       pip:
-        requirements: /etc/cellarsense/requirements.txt
+        requirements: "/etc/cellarsense/requirements.txt"
 
-    - name: Creating user
+    - name: "Creating user"
       user:
-        name: cellarsense
+        name: "cellarsense"
+        groups: "i2c,gpio,spi"
+        append: yes
 
-    - name: Enable I2C for SHT31-D
+    - name: "Enable I2C for SHT31-D"
       shell: "raspi-config nonint do_i2c 0"
 
-    - name: Enable SPI for Inky pHAT
+    - name: "Enable SPI for Inky pHAT"
       shell: "raspi-config nonint do_spi 0"
 
-    - name: Create directory /var/local/cellarsense
+    - name: "Create directory /var/local/cellarsense"
       file:
-        path: /var/local/cellarsense
-        state: directory
+        path: "/var/local/cellarsense"
+        state: "directory"
 
-    - name: Copy background to /var/local/cellarsense
+    - name: "Copy background to /var/local/cellarsense"
       copy:
-        src: ../resources/cellarsense-background.png
-        dest: /var/local/cellarsense/cellarsense-background.png
-        owner: root
-        group: root
-        mode: '0644'
+        src: "../resources/cellarsense-background.png"
+        dest: "/var/local/cellarsense/cellarsense-background.png"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+
+    - name: "Copy scripts to /usr/local/bin"
+      copy:
+        src: "{{ item }}"
+        dest: "/usr/local/bin/"
+        owner: "root"
+        group: "root"
+        mode: "0755"
+      with_fileglob:
+        - "../scripts/*.py"
+
+    - name: "Create log directory /var/log/cellarsense"
+      file:
+        path: "/var/log/cellarsense"
+        state: "directory"
+        owner: "cellarsense"
+        group: "cellarsense"
+
+    - name: "Copy logrotate config to /etc/logrotate.d"
+      copy:
+        src: "../conf/cellarsense"
+        dest: "/etc/logrotate.d/"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+
+    - name: "Copy cellarsense-read.service to /lib/systemd/system/"
+      copy:
+        src: "../conf/cellarsense-read.service"
+        dest: "/lib/systemd/system/"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+
+    - name: "Template cellarsense-show.service to /lib/systemd/system"
+      template:
+        src: "../conf/cellarsense-show.service"
+        dest: "/lib/systemd/system/"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+
+    - name: "Reload systemd"
+      systemd:
+        daemon_reload: yes
+
+    - name: "Enable cellarsense-read.service in systemd"
+      systemd:
+        name: "cellarsense-read.service"
+        enabled: yes
+
+    - name: "Enable cellarsense-show.service in systemd"
+      systemd:
+        name: "cellarsense-show.service"
+        enabled: yes
