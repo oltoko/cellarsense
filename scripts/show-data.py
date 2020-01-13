@@ -67,8 +67,8 @@ def readAvgFromDays(days):
         humSum += point["humidity"]
         count += 1
 
-    avgTemp = tempSum / count
-    avgHum = humSum / count
+    avgTemp = tempSum / count if count != 0 else 0.0
+    avgHum = humSum / count if count != 0 else 0.0
 
     avg = {"temperature": avgTemp, "humidity": avgHum}
     
