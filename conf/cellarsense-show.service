@@ -1,0 +1,12 @@
+[Unit]
+Description=Service to print measurements to the inky pHat
+After=cellarsense-read.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/show-data.py --colour {{ colour }}
+User=cellarsense
+Group=cellarsense
+
+[Install]
+WantedBy=multi-user.target

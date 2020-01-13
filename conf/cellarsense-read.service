@@ -1,0 +1,12 @@
+[Unit]
+Description=Service to read measurements from the sht31d sensor
+After=influxdb.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/read-from-sht31d.py
+User=cellarsense
+Group=cellarsense
+
+[Install]
+WantedBy=multi-user.target
