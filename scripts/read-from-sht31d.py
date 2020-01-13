@@ -29,7 +29,7 @@ import time
 from influxdb import InfluxDBClient
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG ,format="%(asctime)-15s %(levelname)-8s - %(message)s")
+logging.basicConfig(level=logging.INFO ,format="%(asctime)-15s %(levelname)-8s - %(message)s")
 
 # Establish connection to influxDB
 logging.info("Connect to InfluxDB")
@@ -86,9 +86,9 @@ def shutdown(signum, frame):
 
     logging.warn("Shutdown!")
     sensor.heater = False
-    logging.info("Shutdown: disabled heater")
+    logging.warn("Shutdown: disabled heater")
     influx.close()
-    logging.info("Shutdown: disconnect influx")
+    logging.warn("Shutdown: disconnect influx")
     sys.exit(0)
 
 # Gracefully shutdown on signal
@@ -99,8 +99,8 @@ signal.signal(signal.SIGTERM, shutdown)
 s = sched.scheduler(time.time, time.sleep)
 
 # Execute heating and measurement
-heater(1800, 1, s, sensor)
-measure(3600, 10, s, sensor)
+heater(1801, 1, s, sensor)
+measure(1800, 10, s, sensor)
 
 # Run scheduler
 logging.info("Start scheduler")
