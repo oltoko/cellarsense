@@ -1,0 +1,8 @@
+/var/log/cellarsense/*log { 
+        weekly                  # wöchentlich
+        rotate 10               # Behalte die letzten zehn Logs
+        compress                # Komprimiere die alten Logdateien
+        delaycompress           # Komprimiere die Daten, nachdem sie verschoben worden sind
+        missingok               # Falls eine Logdatei nicht existiert, ignoriere es
+        notifempty              # Leere Logdateien werden nicht rotiert
+}
