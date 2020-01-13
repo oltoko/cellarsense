@@ -26,7 +26,7 @@ from inky import InkyPHAT
 from influxdb import InfluxDBClient
 
 # Configure logging
-logging.basicConfig(level=logging.INFO ,format="%(asctime)-15s %(levelname)-8s - %(message)s")
+logging.basicConfig(level=logging.INFO ,format="%(asctime)-15s %(levelname)-8s - %(message)s", filename="/var/log/cellarsense/show.log)
 
 # Parse arguments
 parser = argparse.ArgumentParser()

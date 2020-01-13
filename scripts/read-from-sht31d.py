@@ -29,7 +29,7 @@ import time
 from influxdb import InfluxDBClient
 
 # Configure logging
-logging.basicConfig(level=logging.INFO ,format="%(asctime)-15s %(levelname)-8s - %(message)s")
+logging.basicConfig(level=logging.INFO ,format="%(asctime)-15s %(levelname)-8s - %(message)s", filename="/var/log/cellarsense/read-sht31d.log")
 
 # Establish connection to influxDB
 logging.info("Connect to InfluxDB")
